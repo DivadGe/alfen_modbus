@@ -9,7 +9,7 @@ from typing import Optional
 
 import voluptuous as vol
 from pymodbus.client import ModbusTcpClient
-from pymodbus.payload import BinaryPayloadDecoder
+from pymodbus.payloads import BinaryPayloadDecoder
 from pymodbus.constants import Endian
 
 import homeassistant.helpers.config_validation as cv
