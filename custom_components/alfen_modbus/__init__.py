@@ -9,6 +9,8 @@ from typing import Optional
 
 import voluptuous as vol
 from pymodbus.client import ModbusTcpClient
+from pymodbus.payload import BinaryPayloadDecoder
+from pymodbus.constants import Endian
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
@@ -224,14 +226,14 @@ class AlfenModbusHub:
         """Read holding registers."""
         with self._lock:
             return self._client.read_holding_registers(
-                address=address, count=count, slave=unit
+                address=address, count=count, unit=unit
             )
 
     def write_registers(self, unit, address, payload):
         """Write registers."""
         with self._lock:
             return self._client.write_registers(
-                address=address, values=payload, slave=unit
+                address=address, values=payload, unit=unit
             )
             
     def refresh_max_current(self):
@@ -257,7 +259,27 @@ class AlfenModbusHub:
         return str(s)
 
     def decode_from_registers(self, registers, offset, count, data_type):
-        return self._client.convert_from_registers(registers[offset:offset+count], data_type=data_type, word_order='big')
+        decoder = BinaryPayloadDecoder.fromRegisters(
+            registers[offset:offset+count],
+            byteorder=Endian.Big,
+            wordorder=Endian.Big
+        )
+        if data_type == self._client.DATATYPE.FLOAT32:
+            return decoder.decode_32bit_float()
+        elif data_type == self._client.DATATYPE.FLOAT64:
+            return decoder.decode_64bit_float()
+        elif data_type == self._client.DATATYPE.UINT16:
+            return decoder.decode_16bit_uint()
+        elif data_type == self._client.DATATYPE.UINT32:
+            return decoder.decode_32bit_uint()
+        elif data_type == self._client.DATATYPE.UINT64:
+            return decoder.decode_64bit_uint()
+        elif data_type == self._client.DATATYPE.INT16:
+            return decoder.decode_16bit_int()
+        elif data_type == self._client.DATATYPE.STRING:
+            return decoder.decode_string(count*2)
+        else:
+            raise ValueError(f"Unsupported datatype {data_type}")
 
     def read_modbus_data_station(self):
         status_data = self.read_holding_registers(self._address,1100,6)
