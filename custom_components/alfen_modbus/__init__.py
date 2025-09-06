@@ -10,7 +10,6 @@ import struct
 
 import voluptuous as vol
 from pymodbus.client import ModbusTcpClient
-from pymodbus.constants import Endian  # Keeping this if needed elsewhere, but not used in decoding now
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
