@@ -138,7 +138,7 @@ class AlfenModbusHub:
     ):
         """Initialize the Modbus hub."""
         self._hass = hass
-        self._client = ModbusTcpClient(host, port, timeout=3)
+        self._client = ModbusTcpClient(host, port)
         self._lock = threading.Lock()
         self._name = name
         self._address = address
