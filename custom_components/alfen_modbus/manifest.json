@@ -7,6 +7,6 @@
   "documentation": "https://github.com/divadge/alfen_modbus",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/divadge/alfen_modbus/issues",
-  "requirements": ["pymodbus==3.11.1"],
+  "requirements": ["pymodbus==3.11.2"],
   "version": "1.0.0"
 }
